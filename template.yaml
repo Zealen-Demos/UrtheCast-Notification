@@ -41,9 +41,8 @@ Resources:
   MySecret:
     Type: 'AWS::SecretsManager::Secret'
     Properties:
-      Name: NotificationPW
+      Name: NotificationSecret2
       Description: Dynamically generated password.
-      recovery_window_in_days: 0,
       GenerateSecretString:
         SecretStringTemplate: '{"username":"Zealen"}'
         GenerateStringKey: password
@@ -70,7 +69,6 @@ Resources:
         id: 945047b1-115b-46b9-96bf-5939c9cecc2e
   MessageStorage:
     Type: 'AWS::S3::Bucket'
-    Properties: {}
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 87a5bac2-2747-4ee0-9d7b-72c539d19fef
@@ -85,7 +83,7 @@ Resources:
           Type: S3
           Properties:
             Bucket: !Ref MessageStorage
-            Events: S3:ObjectCreated:*
+            Events: s3:ObjectCreated:*
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 402522aa-741d-46b1-9fa3-7e05c56e2653
