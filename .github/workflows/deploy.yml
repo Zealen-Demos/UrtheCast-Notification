@@ -16,7 +16,7 @@ jobs:
     - uses: r0zar/sam-deploy-action@v1.4
       env:
         TEMPLATE: 'template.yaml'
-        AWS_STACK_NAME: prod-${{ github.actor }}-resourceful
+        AWS_STACK_NAME: ${{ github.actor }}-notification
         AWS_REGION: 'ca-central-1'
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -41,7 +41,6 @@ Resources:
   MySecret:
     Type: 'AWS::SecretsManager::Secret'
     Properties:
-      Name: NotificationSecret2
       Description: Dynamically generated password.
       GenerateSecretString:
         SecretStringTemplate: '{"username":"Zealen"}'
