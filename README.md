@@ -41,12 +41,16 @@ DynamoDBCrudPolicy
 The build process is comprised of the below components
 
 #### GitHub
+Github is no repo of choice. Here we are using Github Actions with a .py set of instructions to build the project with SAM. Our secret credentials from AWS are stored here to access the build.
 
 #### SAM
+SAM will help us deploy Serverless architecture in AWS. When the action is kicked off, the .yml template for our infrastructure is converted to CloudFormation format and built in an environment powered by Github Actions. The results are sent to a bucket in AWS.
 
 #### Build Artifacts
+This bucket isn't part of our IaC, so it isn't meant to be managed in this project. All this bucket is responsible for is ensuring our build artifacts can be accessed by CloudFormation. The Github Action also facilitates this with AWS CLI.
 
 #### CloudFormation
+Deploys and maintains our application stack.
 
 ## Assumptions
 
