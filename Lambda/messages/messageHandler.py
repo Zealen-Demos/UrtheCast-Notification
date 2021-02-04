@@ -12,7 +12,7 @@ AWS_REGION = "ca-central-1"
 s3 = boto3.client('s3')
 sns = boto3.client('sns')
 ses = boto3.client('ses', region_name=AWS_REGION)
-dynamodb = boto3.resource('dynamodb').Table('Messages')
+dynamodb = boto3.resource('dynamodb').Table('MessagesTable')
 
 def lambda_handler(event, context):
 

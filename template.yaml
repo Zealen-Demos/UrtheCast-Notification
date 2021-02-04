@@ -16,7 +16,7 @@ Resources:
   MessageStorage:
     Type: 'AWS::S3::Bucket'
   MessageHandler:
-    Type: AWS::Serverless::Function
+    Type: 'AWS::Serverless::Function'
     Properties:
       CodeUri: Lambda/messages
       Handler: messageHandler.lambda_handler
@@ -25,16 +25,8 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref MessagesTable
         - SESCrudPolicy:
-            IdentityName: "fall_back_up@hotmail.com"
-        - PolicyName: 'snspub'
-            Version: '2012-10-17'
-            Statement: 
-            - Effect: Allow
-            Action: 'sns:Publish'
-            Resource: *
-            
-        - S3FullAccessPolicy:
-            BucketName: !Ref MessageStorage
+            IdentityName: "*"
+        - !Ref SNSPubPolicy
       Events:
         S3Event:
           Type: S3
@@ -42,12 +34,24 @@ Resources:
             Bucket: !Ref MessageStorage
             Events: s3:ObjectCreated:*
   MessagesTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: 'AWS::Serverless::SimpleTable'
     Properties:
       PrimaryKey:
-        Name: message_id 
-        Type: String 
+        Name: 'message_id'
+        Type: 'String'
       ProvisionedThroughput:
         ReadCapacityUnits: 5 
         WriteCapacityUnits: 5 
-      TableName: MessagesTable
+      TableName: 'MessagesTable'
+      
+      
+  SNSPubPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: SNSPubPolicy
+      PolicyDocument: 
+        Version: 2012-10-17
+        Statement: 
+          - Effect: Allow
+            Action: 'sns:Publish'
+            Resource: "*"
