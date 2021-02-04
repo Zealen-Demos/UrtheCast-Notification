@@ -1,42 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Metadata:
-  'AWS::CloudFormation::Designer':
-    79556efa-6ea1-4378-9909-a22709f12469:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 340
-        'y': 240
-      z: 0
-      embeds: []
-    945047b1-115b-46b9-96bf-5939c9cecc2e:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 160
-        'y': 240
-      z: 0
-      embeds: []
-    87a5bac2-2747-4ee0-9d7b-72c539d19fef:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 160
-        'y': 150
-      z: 0
-      embeds: []
-    402522aa-741d-46b1-9fa3-7e05c56e2653:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 340
-        'y': 150
-      z: 0
 Resources:
   MySecret:
     Type: 'AWS::SecretsManager::Secret'
@@ -50,39 +13,41 @@ Resources:
       Tags:
         - Key: Notification
           Value: Secret
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 79556efa-6ea1-4378-9909-a22709f12469
-  Notification:
-    Type: 'AWS::RDS::DBInstance'
-    Properties:
-      AllocatedStorage: 5
-      DBInstanceClass: db.t2.micro
-      Engine: postgres
-      DBName: NotificationDB
-      MasterUsername: !Sub '{{resolve:secretsmanager:${MySecret}::username}}'
-      MasterUserPassword: !Sub '{{resolve:secretsmanager:${MySecret}::password}}'
-      BackupRetentionPeriod: 0
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 945047b1-115b-46b9-96bf-5939c9cecc2e
   MessageStorage:
     Type: 'AWS::S3::Bucket'
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 87a5bac2-2747-4ee0-9d7b-72c539d19fef
   MessageHandler:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: Lambda/messages
       Handler: messageHandler.lambda_handler
       Runtime: python3.8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MessagesTable
+        - SESCrudPolicy:
+            IdentityName: "fall_back_up@hotmail.com"
+        - PolicyName: 'snspub'
+            Version: '2012-10-17'
+            Statement: 
+            - Effect: Allow
+            Action: 'sns:Publish'
+            Resource: *
+            
+        - S3FullAccessPolicy:
+            BucketName: !Ref MessageStorage
       Events:
         S3Event:
           Type: S3
           Properties:
             Bucket: !Ref MessageStorage
             Events: s3:ObjectCreated:*
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 402522aa-741d-46b1-9fa3-7e05c56e2653
+  MessagesTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: message_id 
+        Type: String 
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5 
+        WriteCapacityUnits: 5 
+      TableName: MessagesTable
