@@ -1,18 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  MySecret:
-    Type: 'AWS::SecretsManager::Secret'
-    Properties:
-      Description: Dynamically generated password.
-      GenerateSecretString:
-        SecretStringTemplate: '{"username":"Zealen"}'
-        GenerateStringKey: password
-        PasswordLength: 30
-        ExcludeCharacters: '"@/\'
-      Tags:
-        - Key: Notification
-          Value: Secret
   MessageStorage:
     Type: 'AWS::S3::Bucket'
   MessageHandler:
