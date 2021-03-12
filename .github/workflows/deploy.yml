@@ -13,7 +13,7 @@ jobs:
       with:
         node-version: '10.x'
     - run: for d in */ ; do cd $d && npm install --no-package-lock --loglevel=error && cd .. ; done
-    - uses: Zealen/sam-deploy-action@1.5.0.2
+    - uses: Zealen-Forks/sam-deploy-action@1.5.0.2
       env:
         TEMPLATE: 'template.yaml'
         AWS_STACK_NAME: ${{ github.actor }}-notification
